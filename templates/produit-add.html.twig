@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter un Produit</title>
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h2>Ajouter un Nouveau Produit</h2>
+        <form id="addProduitForm">
+            <div class="form-group">
+                <label for="nom">Nom du Produit:</label>
+                <input type="text" id="nom" name="nom" required>
+            </div>
+            <div class="form-group">
+                <label for="description">Description:</label>
+                <textarea id="description" name="description" rows="3"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="prix">Prix:</label>
+                <input type="number" id="prix" name="prix" step="0.01" required>
+            </div>
+            <div class="form-group">
+                <label for="quantite">Quantité:</label>
+                <input type="number" id="quantite" name="quantite" required>
+            </div>
+            <button type="submit">Ajouter Produit</button>
+            <p class="message"><a href="{{ path('app_produit_dashboard') }}">Retour au Tableau de Bord</a></p>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const addProduitForm = document.getElementById('addProduitForm');
+
+            if (addProduitForm) {
+                addProduitForm.addEventListener('submit', async function(event) {
+                    event.preventDefault();
+
+                    const nom = document.getElementById('nom').value;
+                    const description = document.getElementById('description').value;
+                    const prix = parseFloat(document.getElementById('prix').value);
+                    const quantite = parseInt(document.getElementById('quantite').value);
+
+                    try {
+                        const response = await fetch("{{ path('app_produit_add') }}", {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ nom, description, prix, quantite }),
+                        });
+
+                        const result = await response.json();
+
+                        if (response.ok && result.success) {
+                            alert(result.message || 'Produit ajouté avec succès!');
+                            addProduitForm.reset(); // Clear the form
+                            // Optionally redirect or update UI
+                            // window.location.href = './produit-list.html.twig';
+                        } else {
+                            alert(result.message || 'Erreur lors de l\'ajout du produit.');
+                        }
+                    } catch (error) {
+                        console.error('Error adding product:', error);
+                        alert('Une erreur technique est survenue.');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html> 

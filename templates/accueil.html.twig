@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accueil</title>
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h2>Bienvenue!</h2>
+        <p>Vous êtes connecté avec succès.</p>
+        <p id="userInfo"></p>
+        <hr>
+        <p><a href="{{ path('app_produit_dashboard') }}" style="display: block; margin: 15px 0; padding: 10px; background-color: #28a745; color: white; text-decoration: none; border-radius: 5px; text-align: center;">Gérer les Produits</a></p>
+        <hr>
+        <button id="logoutButton">Se déconnecter</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            const userInfo = document.getElementById('userInfo');
+            const logoutButton = document.getElementById('logoutButton');
+
+            if (currentUser && userInfo) {
+                userInfo.textContent = `Connecté en tant que: ${currentUser.username} (${currentUser.email})`;
+            } else {
+                // If no user data in local storage, redirect to login page
+                window.location.href = "{{ path('app_login') }}";
+            }
+
+            if (logoutButton) {
+                logoutButton.addEventListener('click', async () => {
+                    try {
+                        const response = await fetch("{{ path('app_logout') }}", {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                        });
+                        const result = await response.json();
+                        
+                        if(response.ok && result.success){
+                            localStorage.removeItem('currentUser');
+                            alert(result.message || 'Vous avez été déconnecté.');
+                            window.location.href = "{{ path('app_login') }}";
+                        } else {
+                            alert(result.message || 'Erreur lors de la déconnexion.');
+                        }
+
+                    } catch (error) {
+                        console.error('Error during logout:', error);
+                        alert('Une erreur technique lors de la déconnexion est survenue.');
+                        localStorage.removeItem('currentUser');
+                        window.location.href = "{{ path('app_login') }}";
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html> 

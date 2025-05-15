@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des Produits</title>
+    <link rel="stylesheet" href="../../style.css">
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Liste des Produits</h2>
+        <table id="produitsTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nom</th>
+                    <th>Description</th>
+                    <th>Prix</th>
+                    <th>Quantité</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Product rows will be inserted here by JavaScript -->
+            </tbody>
+        </table>
+        <p id="loadingMessage">Chargement des produits...</p>
+        <p class="message"><a href="{{ path('app_produit_dashboard') }}">Retour au Tableau de Bord</a></p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const produitsTableBody = document.querySelector('#produitsTable tbody');
+            const loadingMessage = document.getElementById('loadingMessage');
+
+            async function fetchProduits() {
+                try {
+                    const response = await fetch("{{ path('app_produit_list') }}");
+                    const result = await response.json();
+
+                    if (response.ok && result.success) {
+                        produitsTableBody.innerHTML = ''; // Clear existing rows
+                        if (result.produits && result.produits.length > 0) {
+                            result.produits.forEach(produit => {
+                                const row = produitsTableBody.insertRow();
+                                row.insertCell().textContent = produit.id;
+                                row.insertCell().textContent = produit.nom;
+                                row.insertCell().textContent = produit.description;
+                                row.insertCell().textContent = produit.prix;
+                                row.insertCell().textContent = produit.quantite;
+                            });
+                            loadingMessage.style.display = 'none';
+                        } else {
+                            loadingMessage.textContent = 'Aucun produit trouvé.';
+                        }
+                    } else {
+                        loadingMessage.textContent = result.message || 'Erreur lors du chargement des produits.';
+                    }
+                } catch (error) {
+                    console.error('Error fetching produits:', error);
+                    loadingMessage.textContent = 'Une erreur technique est survenue lors du chargement.';
+                }
+            }
+
+            fetchProduits();
+        });
+    </script>
+</body>
+</html> 

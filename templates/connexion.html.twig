@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion</title>
+    <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Connexion</h2>
+        <form id="connexionForm">
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Mot de passe:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit">Se connecter</button>
+            <p class="message">Pas encore de compte? <a href="{{ path('app_register') }}">S'inscrire</a></p>
+        </form>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const connexionForm = document.getElementById('connexionForm');
+
+            if (connexionForm) {
+                connexionForm.addEventListener('submit', async function(event) {
+                    event.preventDefault();
+
+                    const email = document.getElementById('email').value;
+                    const password = document.getElementById('password').value;
+
+                    try {
+                        const response = await fetch("{{ path('app_login') }}", {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ email, password }),
+                        });
+
+                        const result = await response.json();
+
+                        if (response.ok && result.success) {
+                            alert(result.message || 'Connexion réussie!');
+                            if (result.user) {
+                                localStorage.setItem('currentUser', JSON.stringify(result.user));
+                            }
+                            window.location.href = "{{ path('app_home') }}";
+                        } else {
+                            alert(result.message || 'Email ou mot de passe incorrect.');
+                        }
+                    } catch (error) {
+                        console.error('Error during login:', error);
+                        alert('Une erreur technique est survenue.');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

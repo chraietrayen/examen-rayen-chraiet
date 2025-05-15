@@ -1,0 +1,9 @@
+# config/routes/annotations.yaml
+controllers:
+    resource: ../../src/Controller/
+    type: attribute
+
+# If you don't have a kernel yet, or want to load specific controllers
+# kernel:
+#    resource: ../../src/Kernel.php
+#    type: attribute 

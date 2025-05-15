@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription</title>
+    <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Inscription</h2>
+        <form id="inscriptionForm">
+            <div class="form-group">
+                <label for="username">Nom d'utilisateur:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Mot de passe:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div class="form-group">
+                <label for="confirmPassword">Confirmer le mot de passe:</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required>
+            </div>
+            <button type="submit">S'inscrire</button>
+            <p class="message">Déjà un compte? <a href="{{ path('app_login') }}">Se connecter</a></p>
+        </form>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const inscriptionForm = document.getElementById('inscriptionForm');
+
+            if (inscriptionForm) {
+                inscriptionForm.addEventListener('submit', async function(event) {
+                    event.preventDefault();
+
+                    const username = document.getElementById('username').value;
+                    const email = document.getElementById('email').value;
+                    const password = document.getElementById('password').value;
+                    const confirmPassword = document.getElementById('confirmPassword').value;
+
+                    if (password !== confirmPassword) {
+                        alert('Les mots de passe ne correspondent pas.');
+                        return;
+                    }
+
+                    try {
+                        const response = await fetch("{{ path('app_register') }}", {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ username, email, password }),
+                        });
+
+                        const result = await response.json();
+
+                        if (response.ok) {
+                            alert(result.message || 'Inscription réussie! Vous pouvez maintenant vous connecter.');
+                            window.location.href = "{{ path('app_login') }}";
+                        } else {
+                            alert(result.message || 'Erreur lors de l\'inscription.');
+                        }
+                    } catch (error) {
+                        console.error('Error during registration:', error);
+                        alert('Une erreur technique est survenue.');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

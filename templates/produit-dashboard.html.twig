@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de Bord des Produits</title>
+    <link rel="stylesheet" href="../../style.css">
+    <style>
+        .dashboard-links a {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .dashboard-links a:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Tableau de Bord des Produits</h2>
+        <div class="dashboard-links">
+            <a href="{{ path('app_produit_add') }}">Ajouter un Produit</a>
+            <a href="{{ path('app_produit_list') }}">Lister les Produits</a>
+        </div>
+        <p><a href="{{ path('app_home') }}">Retour à l'accueil</a></p>
+    </div>
+</body>
+</html> 
